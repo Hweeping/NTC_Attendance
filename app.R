@@ -8,7 +8,7 @@ ui <- dashboardPage(
     sidebarMenu(
       id = "tabs",
       menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-      menuItem("New Input", tabName = "new input", icon = icon("pencil")),
+      menuItem("New Input", tabName = "new_input", icon = icon("pencil")),
       menuItem("Attendance", tabName = "attendance", icon = icon("check"))
     )
   ),
@@ -16,7 +16,8 @@ ui <- dashboardPage(
     tabItems(
       #dashboard tab
       tabItem(tabName = "dashboard", h2("Overview")),
-      tabItem(tabName = "new input", h2("New Data Entry"))
+      tabItem(tabName = "new_input", h2("New Data Entry")),
+      tabItem(tabName = "attendance", h2("Events Check-In"))
     )
   )
 )
