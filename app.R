@@ -8,7 +8,8 @@ ui <- dashboardPage(
     sidebarMenu(
       id = "tabs",
       menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-      menuItem("New Input", tabName = "new input", icon = icon("pencil"))
+      menuItem("New Input", tabName = "new input", icon = icon("pencil")),
+      menuItem("Attendance", tabName = "attendance", icon = icon("check"))
     )
   ),
   dashboardBody(
