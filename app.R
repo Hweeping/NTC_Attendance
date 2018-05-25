@@ -1,8 +1,7 @@
 library(shiny)
 library(shinyjs)
 library(shinydashboard)
-
-fieldsMandatory <- c("name", "age")
+library(googlesheets)
 
 labelMandatory <- function(label) {
   tagList(
@@ -10,7 +9,15 @@ labelMandatory <- function(label) {
     span("*", class = "mandatory_star")
   )
 }
+
+fieldsMandatory <- c("name", "id","age")
+fieldsAll <- c("name", "id","age")
+df.colnames <- c("Name","NRIC/Passport","Age")
+responsesDir <- file.path("responses")
 appCSS <- ".mandatory_star { color: red; }"
+goggle_sheet_key <- "1AeRjvftIZrx7c14xJ3sPhveQICBK_7FezfKmrs9ORQU"
+
+table <- gs_title("NTC_Database")
 
 ui <- dashboardPage(
   dashboardHeader(
@@ -36,6 +43,7 @@ ui <- dashboardPage(
           div(
             id = "form",
             textInput("name", labelMandatory("Name"), ""),
+            textInput("id", labelMandatory("NRIC/Passport Number"), ""),
             textInput("age", labelMandatory("Age"), ""),
             actionButton("submit", "Submit", class = "btn-primary")
           )
@@ -59,6 +67,22 @@ server <- function(input, output, session) {
     
     # enable/disable the submit button
     shinyjs::toggleState(id = "submit", condition = mandatoryFilled)
+    
+    formData <- reactive({
+      # data1 <- sapply(fieldsAll, function(x) input[[x]])
+      # data1 <- t(data1)
+    })
+    
+    saveData <- function(data) {
+      sheet <- gs_key(goggle_sheet_key,lookup = FALSE, visibility = "private")
+      gs_edit_cells(sheet, input = c("Name","NRIC/Passport","Age"), byrow = TRUE, trim = FALSE)
+      #gs_add_row(sheet, )
+      }
+    
+    # action to take when submit button is pressed
+    observeEvent(input$submit, {
+      saveData(formData())
+    })
   })
 }
 
