@@ -46,6 +46,13 @@ ui <- dashboardPage(
             textInput("id", labelMandatory("NRIC/Passport Number"), ""),
             textInput("age", labelMandatory("Age"), ""),
             actionButton("submit", "Submit", class = "btn-primary")
+          ),
+          shinyjs::hidden(
+            div(
+              id = "thankyou_msg",
+              h3("Thanks, your response has been recorded"),
+              actionLink("submit_another", "Submit another response")
+            )
           )
         )
       ),
@@ -69,20 +76,32 @@ server <- function(input, output, session) {
     shinyjs::toggleState(id = "submit", condition = mandatoryFilled)
     
     formData <- reactive({
-      # data1 <- sapply(fieldsAll, function(x) input[[x]])
-      # data1 <- t(data1)
+      data <- sapply(fieldsAll, function(x) input[[x]])
+      # data <- sapply(function(x) input[[x]])
+      data <- t(data)
     })
     
     saveData <- function(data) {
       sheet <- gs_key(goggle_sheet_key,lookup = FALSE, visibility = "private")
-      gs_edit_cells(sheet, input = c("Name","NRIC/Passport","Age"), byrow = TRUE, trim = FALSE)
-      #gs_add_row(sheet, )
+      # gs_edit_cells(sheet, input = c("Name","NRIC/Passport","Age"), byrow = TRUE, trim = FALSE)
+      # gs_add_row(sheet, input = data)
+      gs_edit_cells(sheet, input = data, byrow = TRUE)
+      gs_add_row(sheet, input = "")
       }
     
-    # action to take when submit button is pressed
+    # action to take when submit butty  on is pressed
     observeEvent(input$submit, {
       saveData(formData())
+      shinyjs::reset("form")
+      shinyjs::hide("form")
+      shinyjs::show("thankyou_msg")
     })
+    
+    observeEvent(input$submit_another, {
+      shinyjs::show("form")
+      shinyjs::hide("thankyou_msg")
+    }) 
+    
   })
 }
 
